@@ -1,0 +1,128 @@
+.parking-slots-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+.filters-section {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.filter-group select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.no-slots {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  color: #666;
+  grid-column: 1 / -1;
+}
+
+.no-slots h3 {
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 1.4rem;
+}
+
+.no-slots p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.sample-data-notice {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  color: #856404;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.filter-summary {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.filter-summary h3 {
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+}
+
+.filter-summary p {
+  color: #666;
+  font-size: 1rem;
+  margin: 8px 0;
+}
+
+.filter-summary .result-count {
+  color: #667eea;
+  font-weight: 600;
+  margin-top: 12px;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .filters-section {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .slots-grid {
+    grid-template-columns: 1fr;
+  }
+}
