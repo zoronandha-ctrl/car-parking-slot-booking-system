@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import './Auth.css';
@@ -11,6 +11,8 @@ function Login({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [serverWaking, setServerWaking] = useState(false);
+  const [wakingTime, setWakingTime] = useState(0);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,19 +22,56 @@ function Login({ onLogin }) {
     });
   };
 
+  useEffect(() => {
+    let interval;
+    if (serverWaking) {
+      setWakingTime(0);
+      interval = setInterval(() => {
+        setWakingTime(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [serverWaking]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    setServerWaking(false);
+
+    const startTime = Date.now();
 
     try {
       const response = await authAPI.login(formData);
+      const responseTime = Date.now() - startTime;
+
+      // If response took more than 5 seconds, server was probably waking up
+      if (responseTime > 5000) {
+        setServerWaking(false);
+      }
+
       onLogin(response.data.user, response.data.token);
       navigate('/slots');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      const responseTime = Date.now() - startTime;
+      
+      // Check if it's a timeout or slow response (server waking up)
+      if (err.code === 'ECONNABORTED' || responseTime > 5000) {
+        setServerWaking(true);
+        setError('Server is waking up... Please wait (this may take 30-60 seconds)');
+        
+        // Retry after showing the message
+        setTimeout(() => {
+          handleSubmit(e);
+        }, 3000);
+      } else {
+        setError(err.response?.data?.message || 'Login failed');
+        setServerWaking(false);
+      }
     } finally {
-      setLoading(false);
+      if (!serverWaking) {
+        setLoading(false);
+      }
     }
   };
 
@@ -77,10 +116,29 @@ function Login({ onLogin }) {
             </div>
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          {error && (
+            <div className={serverWaking ? "server-waking-message" : "error-message"}>
+              {error}
+            </div>
+          )}
+
+          {serverWaking && (
+            <div className="server-waking-animation">
+              <div className="waking-spinner"></div>
+              <p className="waking-text">
+                🌟 Waking up the server... {wakingTime}s
+              </p>
+              <p className="waking-subtext">
+                Free tier servers sleep after inactivity. First request may take 30-60 seconds.
+              </p>
+              <div className="waking-progress">
+                <div className="waking-progress-bar" style={{ width: `${Math.min(wakingTime * 2, 100)}%` }}></div>
+              </div>
+            </div>
+          )}
 
           <button type="submit" disabled={loading} className="auth-button">
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? (serverWaking ? '⏳ Waking Server...' : '🔐 Logging in...') : '🚀 Login'}
           </button>
         </form>
 

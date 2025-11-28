@@ -141,6 +141,85 @@
   text-decoration: underline;
 }
 
+/* Server Waking Animation */
+.server-waking-message {
+  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  color: #d63031;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  text-align: center;
+  font-weight: 600;
+  border: 2px solid #fdcb6e;
+}
+
+.server-waking-animation {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  padding: 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 2px solid #90caf9;
+}
+
+.waking-spinner {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 16px;
+  border: 5px solid #e3f2fd;
+  border-top: 5px solid #2196f3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.waking-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1976d2;
+  margin-bottom: 8px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.waking-subtext {
+  font-size: 0.85rem;
+  color: #1565c0;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.waking-progress {
+  width: 100%;
+  height: 8px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.waking-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #2196f3 0%, #1976d2 100%);
+  border-radius: 4px;
+  transition: width 1s linear;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -100px; }
+  100% { background-position: 200px; }
+}
+
 @media (max-width: 480px) {
   .auth-card {
     padding: 32px 24px;
@@ -148,5 +227,18 @@
 
   .auth-card h2 {
     font-size: 1.6rem;
+  }
+  
+  .waking-spinner {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .waking-text {
+    font-size: 1rem;
+  }
+  
+  .waking-subtext {
+    font-size: 0.8rem;
   }
 }
