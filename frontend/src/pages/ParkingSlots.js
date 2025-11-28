@@ -113,11 +113,6 @@ function ParkingSlots({ user }) {
       <div className="page-header">
         <h1>Available Parking Slots</h1>
         <p>Find and book your perfect parking spot</p>
-        {showSampleData && (
-          <div className="sample-data-notice">
-            ℹ️ Showing sample data. Add real parking slots from Admin Dashboard.
-          </div>
-        )}
       </div>
 
       <div className="filters-section">

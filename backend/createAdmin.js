@@ -8,9 +8,10 @@ dotenv.config();
 
 const createAdminUser = async () => {
   try {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('MongoDB Connected');
+    // Connect to MongoDB Atlas
+    const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://zoronandha_db_user:eM4ya5hMhYd7F74d@cluster0.uuzxvbm.mongodb.net/parking-booking?retryWrites=true&w=majority&appName=Cluster0';
+    await mongoose.connect(mongoURI);
+    console.log('MongoDB Connected to Atlas');
 
     // Check if admin already exists
     const existingAdmin = await User.findOne({ email: 'khemasai413@gmail.com' });
