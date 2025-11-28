@@ -7,23 +7,34 @@ const getRazorpayConfig = () => {
   try {
     const firebaseConfig = require('../config/firebase-env');
     return {
-      key_id: firebaseConfig.RAZORPAY_KEY_ID,
-      key_secret: firebaseConfig.RAZORPAY_KEY_SECRET
+      key_id: firebaseConfig.RAZORPAY_KEY_ID || 'dummy_key',
+      key_secret: firebaseConfig.RAZORPAY_KEY_SECRET || 'dummy_secret'
     };
   } catch (e) {
     return {
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET
+      key_id: process.env.RAZORPAY_KEY_ID || 'dummy_key',
+      key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
     };
   }
 };
 
-// Initialize Razorpay
-const razorpay = new Razorpay(getRazorpayConfig());
+// Initialize Razorpay only if keys are provided
+let razorpay = null;
+const config = getRazorpayConfig();
+if (config.key_id && config.key_id !== 'dummy_key') {
+  razorpay = new Razorpay(config);
+}
 
 // Create payment order
 const createPaymentOrder = async (req, res) => {
   try {
+    // Check if Razorpay is configured
+    if (!razorpay) {
+      return res.status(503).json({ 
+        message: 'Payment gateway not configured. Please contact administrator.' 
+      });
+    }
+
     const { bookingId } = req.body;
 
     const booking = await Booking.findById(bookingId);
@@ -68,6 +79,13 @@ const createPaymentOrder = async (req, res) => {
 // Verify payment
 const verifyPayment = async (req, res) => {
   try {
+    // Check if Razorpay is configured
+    if (!razorpay) {
+      return res.status(503).json({ 
+        message: 'Payment gateway not configured. Please contact administrator.' 
+      });
+    }
+
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId } = req.body;
 
     // Verify signature
