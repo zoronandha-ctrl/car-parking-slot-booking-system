@@ -40,4 +40,9 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log('🔐 Environment Variables Check:');
+  console.log('- RAZORPAY_KEY_ID:', process.env.RAZORPAY_KEY_ID ? `${process.env.RAZORPAY_KEY_ID.substring(0, 12)}... (${process.env.RAZORPAY_KEY_ID.length} chars)` : '❌ NOT SET');
+  console.log('- RAZORPAY_KEY_SECRET:', process.env.RAZORPAY_KEY_SECRET ? `****** (${process.env.RAZORPAY_KEY_SECRET.length} chars)` : '❌ NOT SET');
+  console.log('- MONGODB_URI:', process.env.MONGODB_URI ? '✅ SET' : '❌ NOT SET');
+  console.log('- JWT_SECRET:', process.env.JWT_SECRET ? '✅ SET' : '❌ NOT SET');
 });
