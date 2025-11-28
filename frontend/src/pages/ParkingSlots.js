@@ -20,7 +20,6 @@ function ParkingSlots({ user }) {
     available: 'true'
   });
   const [cities, setCities] = useState([]);
-  const [showSampleData, setShowSampleData] = useState(false);
 
   const applyFilters = useCallback(() => {
     let filtered = [...slots];
@@ -73,16 +72,13 @@ function ParkingSlots({ user }) {
       // If no slots from database, use sample data
       if (response.data.length === 0) {
         setSlots(sampleParkingLocations);
-        setShowSampleData(true);
       } else {
         setSlots(response.data);
-        setShowSampleData(false);
       }
       setError('');
     } catch (err) {
       // On error, fallback to sample data
       setSlots(sampleParkingLocations);
-      setShowSampleData(true);
       setError('');
     } finally {
       setLoading(false);
