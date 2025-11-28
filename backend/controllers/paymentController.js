@@ -2,40 +2,49 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Booking = require('../models/Booking');
 
-// Get Razorpay config from Firebase or env
-const getRazorpayConfig = () => {
-  try {
-    const firebaseConfig = require('../config/firebase-env');
-    return {
-      key_id: firebaseConfig.RAZORPAY_KEY_ID || 'dummy_key',
-      key_secret: firebaseConfig.RAZORPAY_KEY_SECRET || 'dummy_secret'
-    };
-  } catch (e) {
-    return {
-      key_id: process.env.RAZORPAY_KEY_ID || 'dummy_key',
-      key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
-    };
-  }
-};
+// Add debug logging
+console.log('Environment check:', {
+  hasKeyId: !!process.env.RAZORPAY_KEY_ID,
+  hasKeySecret: !!process.env.RAZORPAY_KEY_SECRET,
+  keyIdLength: process.env.RAZORPAY_KEY_ID?.length,
+  keyIdPrefix: process.env.RAZORPAY_KEY_ID?.substring(0, 8)
+});
 
-// Initialize Razorpay only if keys are provided
+// Initialize Razorpay with environment variables
 let razorpay = null;
-const config = getRazorpayConfig();
-if (config.key_id && config.key_id !== 'dummy_key') {
-  razorpay = new Razorpay(config);
+
+try {
+  const keyId = process.env.RAZORPAY_KEY_ID?.trim();
+  const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim();
+
+  if (keyId && keySecret && keyId !== 'your_razorpay_key_id_here') {
+    razorpay = new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret
+    });
+    console.log('✅ Razorpay initialized successfully with key:', keyId.substring(0, 12) + '...');
+  } else {
+    console.log('⚠️ Razorpay keys not found or invalid in environment');
+  }
+} catch (error) {
+  console.error('❌ Razorpay initialization error:', error.message);
 }
 
 // Create payment order
 const createPaymentOrder = async (req, res) => {
   try {
+    console.log('📝 Payment order request received');
+    
     // Check if Razorpay is configured
     if (!razorpay) {
+      console.log('❌ Razorpay not initialized');
       return res.status(503).json({ 
         message: 'Payment gateway not configured. Please contact administrator.' 
       });
     }
 
     const { bookingId } = req.body;
+    console.log('📦 Booking ID:', bookingId);
 
     const booking = await Booking.findById(bookingId);
     if (!booking) {
@@ -62,16 +71,18 @@ const createPaymentOrder = async (req, res) => {
       }
     };
 
+    console.log('💰 Creating Razorpay order with options:', options);
     const order = await razorpay.orders.create(options);
+    console.log('✅ Order created successfully:', order.id);
 
     res.json({
       orderId: order.id,
       amount: order.amount,
       currency: order.currency,
-      keyId: getRazorpayConfig().key_id
+      keyId: process.env.RAZORPAY_KEY_ID
     });
   } catch (error) {
-    console.error('Payment order creation error:', error);
+    console.error('❌ Payment order creation error:', error);
     res.status(500).json({ message: 'Failed to create payment order', error: error.message });
   }
 };
@@ -79,6 +90,8 @@ const createPaymentOrder = async (req, res) => {
 // Verify payment
 const verifyPayment = async (req, res) => {
   try {
+    console.log('🔍 Payment verification request received');
+    
     // Check if Razorpay is configured
     if (!razorpay) {
       return res.status(503).json({ 
@@ -91,13 +104,16 @@ const verifyPayment = async (req, res) => {
     // Verify signature
     const body = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSignature = crypto
-      .createHmac('sha256', getRazorpayConfig().key_secret)
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(body.toString())
       .digest('hex');
 
     if (expectedSignature !== razorpay_signature) {
+      console.log('❌ Invalid payment signature');
       return res.status(400).json({ message: 'Invalid payment signature' });
     }
+
+    console.log('✅ Payment signature verified');
 
     // Update booking
     const booking = await Booking.findByIdAndUpdate(
@@ -110,12 +126,14 @@ const verifyPayment = async (req, res) => {
       { new: true }
     ).populate('parkingSlot');
 
+    console.log('✅ Booking updated:', bookingId);
+
     res.json({
       message: 'Payment verified successfully',
       booking
     });
   } catch (error) {
-    console.error('Payment verification error:', error);
+    console.error('❌ Payment verification error:', error);
     res.status(500).json({ message: 'Payment verification failed', error: error.message });
   }
 };
