@@ -21,16 +21,23 @@ const createAdminUser = async () => {
       console.log('Email:', existingAdmin.email);
       console.log('Role:', existingAdmin.role);
       
+      // Update password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('Hemasai123', salt);
+      existingAdmin.password = hashedPassword;
+      
       // Update to admin if not already
       if (existingAdmin.role !== 'admin') {
         existingAdmin.role = 'admin';
-        await existingAdmin.save();
-        console.log('User role updated to admin!');
       }
+      
+      await existingAdmin.save();
+      console.log('✅ Admin password updated successfully!');
+      console.log('New Password: Hemasai123');
     } else {
       // Hash password
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash('Hemasai@123', salt);
+      const hashedPassword = await bcrypt.hash('Hemasai123', salt);
 
       // Create admin user
       const adminUser = new User({
@@ -44,7 +51,7 @@ const createAdminUser = async () => {
       await adminUser.save();
       console.log('✅ Admin user created successfully!');
       console.log('Email: khemasai413@gmail.com');
-      console.log('Password: Hemasai@123');
+      console.log('Password: Hemasai123');
       console.log('Role: admin');
     }
 
