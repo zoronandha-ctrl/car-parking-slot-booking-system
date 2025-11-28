@@ -2,12 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const { startBookingStatusJob } = require('./jobs/bookingStatusUpdater');
 
 // Load environment variables
 dotenv.config();
 
 // Connect to database
 connectDB();
+
+// Start automatic booking status updater
+startBookingStatusJob();
 
 const app = express();
 

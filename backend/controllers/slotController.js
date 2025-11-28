@@ -1,4 +1,5 @@
 const ParkingSlot = require('../models/ParkingSlot');
+const Booking = require('../models/Booking');
 
 // Get all parking slots
 const getAllSlots = async (req, res) => {
@@ -13,6 +14,20 @@ const getAllSlots = async (req, res) => {
     if (available !== undefined) filter.isAvailable = available === 'true';
 
     const slots = await ParkingSlot.find(filter).sort({ createdAt: -1 });
+    
+    // Update slot availability based on current bookings
+    const now = new Date();
+    for (const slot of slots) {
+      const activeBooking = await Booking.findOne({
+        parkingSlot: slot._id,
+        status: { $in: ['confirmed', 'pending'] },
+        startTime: { $lte: now },
+        endTime: { $gte: now }
+      });
+      
+      slot.isAvailable = !activeBooking;
+    }
+    
     res.json(slots);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });

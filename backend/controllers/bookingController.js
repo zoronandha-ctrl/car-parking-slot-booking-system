@@ -69,6 +69,17 @@ const createBooking = async (req, res) => {
 // Get all bookings for current user
 const getUserBookings = async (req, res) => {
   try {
+    // Update expired bookings before fetching
+    const now = new Date();
+    await Booking.updateMany(
+      {
+        user: req.user._id,
+        status: { $in: ['confirmed', 'pending'] },
+        endTime: { $lt: now }
+      },
+      { status: 'completed' }
+    );
+
     const bookings = await Booking.find({ user: req.user._id })
       .populate('parkingSlot')
       .sort({ createdAt: -1 });
