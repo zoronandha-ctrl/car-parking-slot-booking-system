@@ -7,13 +7,14 @@ function Footer() {
       <div className="footer-content">
         <p className="footer-text">
           Freelancing Project by{' '}
+          <span className="footer-name">HEMASAI</span>, for more projects visit{' '}
           <a 
             href="https://portfolio-sigma-black-77.vercel.app/" 
             target="_blank" 
             rel="noopener noreferrer"
             className="footer-link"
           >
-            Hemasai
+            Portfolio
           </a>
         </p>
         <p className="footer-copyright">

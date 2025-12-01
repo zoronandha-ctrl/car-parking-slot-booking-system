@@ -18,20 +18,29 @@
   font-weight: 500;
 }
 
-.footer-link {
+.footer-name {
   color: #ffd700;
-  text-decoration: none;
-  font-weight: 700;
+  font-weight: 800;
+  font-size: 1.1em;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.footer-link {
+  color: #ffffff;
+  text-decoration: underline;
+  font-weight: 600;
   transition: all 0.3s ease;
-  padding: 2px 8px;
+  padding: 2px 4px;
   border-radius: 4px;
   display: inline-block;
 }
 
 .footer-link:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffd700;
+  background-color: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
 }
 
 .footer-copyright {
