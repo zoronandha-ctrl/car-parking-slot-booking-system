@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -44,29 +45,32 @@ function App() {
     <Router>
       <div className="App">
         <Navbar user={user} onLogout={handleLogout} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route 
-            path="/login" 
-            element={user ? <Navigate to="/slots" /> : <Login onLogin={handleLogin} />} 
-          />
-          <Route 
-            path="/register" 
-            element={user ? <Navigate to="/slots" /> : <Register onLogin={handleLogin} />} 
-          />
-          <Route 
-            path="/slots" 
-            element={user ? <ParkingSlots user={user} /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/my-bookings" 
-            element={user ? <MyBookings /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/admin" 
-            element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} 
-          />
-        </Routes>
+        <div className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route 
+              path="/login" 
+              element={user ? <Navigate to="/slots" /> : <Login onLogin={handleLogin} />} 
+            />
+            <Route 
+              path="/register" 
+              element={user ? <Navigate to="/slots" /> : <Register onLogin={handleLogin} />} 
+            />
+            <Route 
+              path="/slots" 
+              element={user ? <ParkingSlots user={user} /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/my-bookings" 
+              element={user ? <MyBookings /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/admin" 
+              element={user?.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} 
+            />
+          </Routes>
+        </div>
+        <Footer />
       </div>
     </Router>
   );
